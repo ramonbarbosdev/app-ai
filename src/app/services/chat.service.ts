@@ -2,13 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-interface ChatResponse {
-  reply: string;
-}
-
-interface ChatRequest {
-  conversationId: string;
-  message: string;
+export interface ChatHistory {
+  content: string;
+  type: 'USER' | 'ASSISTANT';
 }
 
 @Injectable({
@@ -25,18 +21,33 @@ export class ChatService {
     message: string
   ): Promise<string> {
 
-    const body: ChatRequest = {
-      conversationId,
-      message
-    };
-
     const res = await firstValueFrom(
-      this.http.post<ChatResponse>(this.API, body)
+      this.http.post<{ reply: string }>(
+        this.API,
+        {
+          conversationId,
+          message
+        }
+      )
     );
 
     return res.reply;
+  }
+
+  getHistory(conversationId: string) {
+
+    return this.http.get<ChatHistory[]>(
+      `${this.API}/history/${conversationId}`
+    );
+
+  }
+
+  getConversations() {
+
+    return this.http.get<string[]>(
+      `${this.API}/conversations`
+    );
 
   }
 
 }
-  

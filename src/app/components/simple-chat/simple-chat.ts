@@ -1,7 +1,9 @@
 import {
   Component,
   signal,
-  effect
+  effect,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 
 import {
@@ -13,22 +15,6 @@ import {
   NgIf,
   NgClass
 } from '@angular/common';
-
-import {
-  CardModule
-} from 'primeng/card';
-
-import {
-  ScrollPanelModule
-} from 'primeng/scrollpanel';
-
-import {
-  InputTextModule
-} from 'primeng/inputtext';
-
-import {
-  ButtonModule
-} from 'primeng/button';
 
 import {
   ChatService
@@ -49,11 +35,7 @@ interface ChatMessage {
     FormsModule,
     NgFor,
     NgIf,
-    NgClass,
-    CardModule,
-    ScrollPanelModule,
-    InputTextModule,
-    ButtonModule
+    NgClass
   ],
 
   templateUrl: './simple-chat.html'
@@ -62,30 +44,45 @@ export class SimpleChat {
 
   private readonly STORAGE_KEY = 'conversationId';
 
+  @ViewChild('scrollContainer')
+  scrollContainer!: ElementRef<HTMLDivElement>;
+
   conversationId = signal<string>(
     localStorage.getItem(this.STORAGE_KEY)
     ?? crypto.randomUUID()
   );
 
-  messages = signal<ChatMessage[]>([
-    {
-      text: 'Olá! Como posso ajudar?',
-      isBot: true
-    }
-  ]);
+  messages = signal<ChatMessage[]>([]);
 
   input = signal('');
 
   loading = signal(false);
 
-  constructor(
-    private chatService: ChatService
-  ) {
+  constructor(private chatService: ChatService) {
 
     localStorage.setItem(
       this.STORAGE_KEY,
       this.conversationId()
     );
+
+    this.loadHistory();
+
+    // AUTO SCROLL
+    effect(() => {
+
+      this.messages();
+
+      queueMicrotask(() => {
+
+        if (!this.scrollContainer) return;
+
+        const el = this.scrollContainer.nativeElement;
+
+        el.scrollTop = el.scrollHeight;
+
+      });
+
+    });
 
   }
 
@@ -97,10 +94,7 @@ export class SimpleChat {
 
     this.messages.update(msgs => [
       ...msgs,
-      {
-        text,
-        isBot: false
-      }
+      { text, isBot: false }
     ]);
 
     this.input.set('');
@@ -117,16 +111,11 @@ export class SimpleChat {
 
       this.messages.update(msgs => [
         ...msgs,
-        {
-          text: reply,
-          isBot: true
-        }
+        { text: reply, isBot: true }
       ]);
 
     }
-    catch (err) {
-
-      console.error(err);
+    catch {
 
       this.messages.update(msgs => [
         ...msgs,
@@ -142,6 +131,63 @@ export class SimpleChat {
       this.loading.set(false);
 
     }
+
+  }
+
+  loadHistory() {
+
+    this.chatService
+      .getHistory(this.conversationId())
+      .subscribe(history => {
+
+        if (!history || history.length === 0) {
+
+          this.messages.set([
+            {
+              text: 'Olá! Como posso ajudar?',
+              isBot: true
+            }
+          ]);
+
+          return;
+
+        }
+
+        const msgs = history.map(m => ({
+          text: m.content,
+
+          isBot: m.type === 'ASSISTANT'
+
+        }));
+
+        this.messages.set(msgs);
+
+      });
+
+  }
+
+  setConversation(id: string) {
+
+    this.conversationId.set(id);
+
+    localStorage.setItem(
+      this.STORAGE_KEY,
+      id
+    );
+
+    this.messages.set([]);
+
+    this.loadHistory();
+
+  }
+
+  onEnter(event: any) {
+
+    if (event.shiftKey) return;
+
+    event.preventDefault();
+
+    this.send();
 
   }
 
