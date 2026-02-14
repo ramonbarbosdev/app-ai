@@ -11,7 +11,6 @@
     <!-- CHAT AREA -->
     <div class="flex-1 flex flex-col min-w-0">
 
-
       <app-chat-canvas [conversation]="activeConversation()" [isTyping]="isTyping()"></app-chat-canvas>
       <app-chat-input [isTyping]="isTyping()" (send)="handleSend($event)"></app-chat-input>
 
@@ -34,12 +33,12 @@
   </div>
 
   <!-- CONVERSATION DOCK -->
-  <!-- <app-conversation-dock
-    [conversations]="conversations()"
+  <app-conversation-dock
+   [conversations]="conversations()"
     [activeId]="activeConversationId()"
     (select)="setActiveConversationId($event)"
     (create)="createConversation()"
-  /> -->
+  ></app-conversation-dock>
 
   <!-- COMMAND PALETTE -->
   <!-- <app-command-palette

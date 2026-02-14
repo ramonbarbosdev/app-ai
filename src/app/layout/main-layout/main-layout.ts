@@ -4,10 +4,11 @@ import { RouterOutlet } from '@angular/router';
 import { ChatCanvas } from "../../features/chat/components/chat-canvas/chat-canvas";
 import { CommonModule } from '@angular/common';
 import { ChatInput } from "../../features/chat/components/chat-input/chat-input";
+import { ConversationDock } from "../../features/chat/components/conversation-dock/conversation-dock";
 
 @Component({
   selector: 'app-main-layout',
-  imports: [ChatHeader, CommonModule, ChatCanvas, ChatInput],
+  imports: [ChatHeader, CommonModule, ChatCanvas, ChatInput, ConversationDock],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss',
 })
