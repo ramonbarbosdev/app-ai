@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Navbar } from './navbar';
+import { ChatCanvas } from './chat-canvas';
 
-describe('Navbar', () => {
-  let component: Navbar;
-  let fixture: ComponentFixture<Navbar>;
+describe('ChatCanvas', () => {
+  let component: ChatCanvas;
+  let fixture: ComponentFixture<ChatCanvas>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Navbar]
+      imports: [ChatCanvas]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Navbar);
+    fixture = TestBed.createComponent(ChatCanvas);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

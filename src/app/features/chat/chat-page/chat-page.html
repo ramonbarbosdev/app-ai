@@ -1,0 +1,114 @@
+<div class="h-screen w-full bg-gradient-to-b from-[#0b0f1a] via-[#0f172a] to-[#020617] text-white flex flex-col">
+
+  <!-- HEADER -->
+  <div class="h-16 border-b border-white/10 flex items-center justify-between px-6">
+
+    <!-- Left -->
+    <div class="flex items-center gap-3">
+
+      <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+        ✦
+      </div>
+
+      <div class="flex items-center gap-2">
+
+        <span class="font-semibold text-white">NEXUS</span>
+
+        <span class="text-emerald-400 font-semibold">AI</span>
+
+        <span class="text-white/40">/</span>
+
+        <span class="text-white/60 text-sm">
+          Arquitetura de Microsserviços
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- Right -->
+    <div class="flex items-center gap-6">
+
+      <div class="flex items-center gap-2 text-emerald-400 text-sm">
+        <div class="w-2 h-2 bg-emerald-400 rounded-full"></div>
+        ONLINE
+      </div>
+
+      <div class="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center font-semibold">
+        U
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="flex-1 flex justify-center overflow-hidden">
+
+    <div class="w-full max-w-3xl flex flex-col justify-end px-4 pb-6">
+
+      <!-- Messages container -->
+      <div class="space-y-6">
+
+        <!-- User Message -->
+        <div class="flex justify-end">
+
+          <div class="bg-white/10 px-4 py-3 rounded-xl max-w-md text-sm">
+            Como estruturar microsserviços com Spring Boot?
+          </div>
+
+        </div>
+
+        <!-- AI Message -->
+        <div class="flex gap-3">
+
+          <!-- Avatar -->
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+            🤖
+          </div>
+
+          <!-- Message -->
+          <div class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm leading-relaxed">
+
+            <p class="mb-3">
+              Para uma arquitetura de microsserviços robusta com Spring Boot, recomendo:
+            </p>
+
+            <p class="mb-1"><b>1. API Gateway</b> — Use Spring Cloud Gateway como ponto de entrada único.</p>
+
+            <p class="mb-1"><b>2. Service Discovery</b> — Eureka Server para registro e descoberta.</p>
+
+            <p class="mb-1"><b>3. Config Server</b> — Centralização de configurações.</p>
+
+            <p class="mb-1"><b>4. Circuit Breaker</b> — Resilience4j para tolerância a falhas.</p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- INPUT -->
+      <div class="mt-6">
+
+        <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
+
+          <input
+            type="text"
+            placeholder="Pergunte qualquer coisa..."
+            class="flex-1 bg-transparent outline-none text-sm placeholder:text-white/40"
+          />
+
+          <button class="text-white/60 hover:text-white transition">
+            ➤
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

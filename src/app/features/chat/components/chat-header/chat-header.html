@@ -1,0 +1,106 @@
+<header
+  class="h-12 flex items-center justify-between px-5 border-b border-white/10 bg-[#0b0f1a]/80 backdrop-blur relative z-50
+         opacity-0 translate-y-[-10px] animate-[fadeInDown_.3s_ease_forwards]"
+>
+
+  <!-- LEFT -->
+  <div class="flex items-center gap-3">
+
+    <!-- Logo -->
+    <div class="relative flex items-center justify-center w-7 h-7">
+
+      <div class="absolute inset-0 rounded-lg bg-emerald-500/20 animate-pulse"></div>
+
+      <!-- Sparkles icon substitute -->
+      <svg
+        class="w-4 h-4 text-emerald-400 relative z-10"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/>
+      </svg>
+
+    </div>
+
+    <!-- Title -->
+    <span class="text-sm font-semibold tracking-wide text-white">
+
+      NEXUS<span class="text-emerald-400">AI</span>
+
+    </span>
+
+    <span class="text-white/40 text-xs mx-2">/</span>
+
+    <span class="text-xs text-white/60 truncate max-w-[200px]">
+
+      {{ conversationTitle }}
+
+    </span>
+
+  </div>
+
+  <!-- CENTER STATUS -->
+  <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+
+    <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+
+    <span class="text-[11px] text-white/60 font-medium tracking-wider uppercase">
+      Online
+    </span>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="flex items-center gap-1">
+
+    <button
+      (click)="onCommandPalette()"
+      class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-white/60 hover:text-white hover:bg-white/10 transition-all duration-200"
+    >
+
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          d="M21 21l-4.3-4.3m1.8-5.2a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+
+      <span class="hidden sm:inline">Buscar</span>
+
+      <kbd
+        class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-mono text-white/50 border border-white/10"
+      >
+        ⌘K
+      </kbd>
+
+    </button>
+
+    <button
+      class="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition"
+    >
+
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/>
+      </svg>
+
+    </button>
+
+    <button
+      class="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition"
+    >
+
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          d="M11.3 1.046l1.4 0 0.4 2.6a7.94 7.94 0 012.3 1.3l2.4-1 1 1-1 2.4a7.94 7.94 0 011.3 2.3l2.6.4 0 1.4-2.6.4a7.94 7.94 0 01-1.3 2.3l1 2.4-1 1-2.4-1a7.94 7.94 0 01-2.3 1.3l-.4 2.6-1.4 0-.4-2.6a7.94 7.94 0 01-2.3-1.3l-2.4 1-1-1 1-2.4a7.94 7.94 0 01-1.3-2.3l-2.6-.4 0-1.4 2.6-.4a7.94 7.94 0 011.3-2.3l-1-2.4 1-1 2.4 1a7.94 7.94 0 012.3-1.3z"/>
+      </svg>
+
+    </button>
+
+    <div
+      class="ml-2 w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400/60 to-cyan-400/60 flex items-center justify-center text-[11px] font-semibold text-white"
+    >
+      U
+    </div>
+
+  </div>
+
+</header>

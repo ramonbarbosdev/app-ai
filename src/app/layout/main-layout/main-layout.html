@@ -1,0 +1,52 @@
+<div class="h-screen w-screen flex flex-col bg-[#020617] overflow-hidden">
+
+  <!-- TOP BAR -->
+
+
+  <app-chat-header [conversationTitle]="activeConversation().title" (commandPalette)="openPalette()"></app-chat-header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- CHAT AREA -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+
+      <app-chat-canvas [conversation]="activeConversation()" [isTyping]="isTyping()"></app-chat-canvas>
+      <app-chat-input [isTyping]="isTyping()" (send)="handleSend($event)"></app-chat-input>
+
+    </div>
+
+    <!-- CONTEXT TOGGLE -->
+    <button (click)="toggleContext()"
+      class="absolute right-2 top-2 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition hidden lg:flex">
+      <span *ngIf="contextOpen()">⮜</span>
+      <span *ngIf="!contextOpen()">⮞</span>
+    </button>
+
+    <!-- CONTEXT PANEL -->
+    <!-- <app-context-panel
+      [conversation]="activeConversation()"
+      [isOpen]="contextOpen()"
+      (close)="contextOpen.set(false)"
+    /> -->
+
+  </div>
+
+  <!-- CONVERSATION DOCK -->
+  <!-- <app-conversation-dock
+    [conversations]="conversations()"
+    [activeId]="activeConversationId()"
+    (select)="setActiveConversationId($event)"
+    (create)="createConversation()"
+  /> -->
+
+  <!-- COMMAND PALETTE -->
+  <!-- <app-command-palette
+    [isOpen]="paletteOpen()"
+    [conversations]="conversations()"
+    (close)="closePalette()"
+    (selectConversation)="setActiveConversationId($event)"
+  /> -->
+
+</div>
