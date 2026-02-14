@@ -1,0 +1,90 @@
+<!-- PANEL -->
+<div
+
+  *ngIf="isOpen"
+
+  class="w-80 border-l border-white/10 bg-[#020617]/80 backdrop-blur flex flex-col animate-[slideIn_.25s_ease]"
+
+>
+
+  <!-- Header -->
+  <div class="h-12 border-b border-white/10 flex items-center justify-between px-4">
+
+    <span class="text-xs text-white/60 uppercase tracking-wider">
+      Contexto
+    </span>
+
+    <button
+
+      (click)="close.emit()"
+
+      class="text-white/40 hover:text-white transition"
+
+    >
+      ✕
+    </button>
+
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 p-4 space-y-4 text-sm">
+
+    <!-- Conversation -->
+    <div>
+
+      <div class="text-white/40 text-xs mb-1">
+        Conversa
+      </div>
+
+      <div class="text-white">
+        {{ conversation?.title }}
+      </div>
+
+    </div>
+
+    <!-- Messages count -->
+    <div>
+
+      <div class="text-white/40 text-xs mb-1">
+        Mensagens
+      </div>
+
+      <div class="text-white">
+        {{ conversation?.messages?.length || 0 }}
+      </div>
+
+    </div>
+
+    <!-- Model -->
+    <div>
+
+      <div class="text-white/40 text-xs mb-1">
+        Modelo
+      </div>
+
+      <div class="text-emerald-400">
+        GPT-4o-mini
+      </div>
+
+    </div>
+
+    <!-- Status -->
+    <div>
+
+      <div class="text-white/40 text-xs mb-1">
+        Status
+      </div>
+
+      <div class="flex items-center gap-2 text-emerald-400">
+
+        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+
+        Ativo
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

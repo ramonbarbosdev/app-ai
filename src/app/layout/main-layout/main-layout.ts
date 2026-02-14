@@ -5,10 +5,11 @@ import { ChatCanvas } from "../../features/chat/components/chat-canvas/chat-canv
 import { CommonModule } from '@angular/common';
 import { ChatInput } from "../../features/chat/components/chat-input/chat-input";
 import { ConversationDock } from "../../features/chat/components/conversation-dock/conversation-dock";
+import { ContextPanel } from "../../features/chat/components/context-panel/context-panel";
 
 @Component({
   selector: 'app-main-layout',
-  imports: [ChatHeader, CommonModule, ChatCanvas, ChatInput, ConversationDock],
+  imports: [ChatHeader, CommonModule, ChatCanvas, ChatInput, ConversationDock, ContextPanel],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss',
 })
@@ -17,16 +18,32 @@ export class MainLayout {
 
   conversations = signal<any[]>([]);
 
-  activeConversation = signal<any>({
-    id: '1',
-    title: 'Arquitetura de Microsserviços',
-    messages: [
-      {
-        role: 'assistant',
-        content: 'Como posso ajudar você hoje?'
-      }
+  activeConversation = signal<any>(
+    [{
+      id: '1',
+      title: 'Arquitetura de Microsserviços',
+      messages: [
+        {
+          role: 'assistant',
+          content: 'Como posso ajudar você hoje?'
+        }
+      ],
+
+    },
+    {
+      id: '2',
+      title: 'Spring AI',
+      messages: []
+    },
+    {
+      id: '3',
+      title: 'Angular Signals',
+      messages: []
+
+    }
     ]
-  });
+
+  );
 
   activeConversationId = signal<string>('1');
 
