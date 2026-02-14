@@ -7,6 +7,19 @@ export interface ChatHistory {
   type: 'USER' | 'ASSISTANT';
 }
 
+interface ChatResult {
+
+  content: string;
+
+  promptTokens: number;
+
+  completionTokens: number;
+
+  totalTokens: number;
+
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +32,10 @@ export class ChatService {
   async sendMessage(
     conversationId: string,
     message: string
-  ): Promise<string> {
+  ): Promise<ChatResult> {
 
     const res = await firstValueFrom(
-      this.http.post<{ reply: string }>(
+      this.http.post<ChatResult>(
         this.API,
         {
           conversationId,
@@ -31,7 +44,8 @@ export class ChatService {
       )
     );
 
-    return res.reply;
+    return res;
+
   }
 
   getHistory(conversationId: string) {

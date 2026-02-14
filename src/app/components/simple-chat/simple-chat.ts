@@ -103,7 +103,7 @@ export class SimpleChat {
 
     try {
 
-      const reply =
+      const result =
         await this.chatService.sendMessage(
           this.conversationId(),
           text
@@ -111,8 +111,16 @@ export class SimpleChat {
 
       this.messages.update(msgs => [
         ...msgs,
-        { text: reply, isBot: true }
+        {
+          text: result.content,
+          isBot: true
+        }
       ]);
+
+      console.log(
+        'Tokens usados:',
+        result.totalTokens
+      );
 
     }
     catch {
