@@ -7,6 +7,7 @@ import { ChatInput } from "../../features/chat/components/chat-input/chat-input"
 import { ConversationDock } from "../../features/chat/components/conversation-dock/conversation-dock";
 import { ContextPanel } from "../../features/chat/components/context-panel/context-panel";
 import { CommandPalette } from "../../features/chat/components/command-palette/command-palette";
+import { ChatStoreService } from '../../services/chat-store.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,105 +17,6 @@ import { CommandPalette } from "../../features/chat/components/command-palette/c
 })
 export class MainLayout {
 
+    constructor(public chat: ChatStoreService) {}
 
-  conversations = signal<any[]>([]);
-
-  activeConversation = signal<any>(
-    [{
-      id: '1',
-      title: 'Arquitetura de Microsserviços',
-      messages: [
-        {
-          role: 'assistant',
-          content: 'Como posso ajudar você hoje?'
-        }
-      ],
-
-    },
-    {
-      id: '2',
-      title: 'Spring AI',
-      messages: []
-    },
-    {
-      id: '3',
-      title: 'Angular Signals',
-      messages: []
-
-    }
-    ]
-
-  );
-
-  activeConversationId = signal<string>('1');
-
-  isTyping = signal(false);
-
-  contextOpen = signal(true);
-
-  paletteOpen = signal(false);
-
-  // SEND MESSAGE
-  handleSend(content: string) {
-
-    this.isTyping.set(true);
-
-    const conversation = this.activeConversation();
-
-    conversation.messages.push({
-      role: 'user',
-      content
-    });
-
-    this.activeConversation.set({ ...conversation });
-
-    setTimeout(() => {
-      this.isTyping.set(false);
-    }, 1400);
-
-  }
-
-  // SELECT CONVERSATION
-  setActiveConversationId(id: string) {
-    this.activeConversationId.set(id);
-  }
-
-  // CREATE CONVERSATION
-  createConversation() {
-
-    const newConv = {
-      id: crypto.randomUUID(),
-      title: 'Nova conversa',
-      messages: []
-    };
-
-    this.conversations.update(c => [...c, newConv]);
-
-  }
-
-  toggleContext() {
-    this.contextOpen.update(v => !v);
-  }
-
-  openPalette() {
-    this.paletteOpen.set(true);
-  }
-
-  closePalette() {
-    this.paletteOpen.set(false);
-  }
-
-  // KEYBOARD SHORTCUT CTRL+K
-  @HostListener('document:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-
-    if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-
-      event.preventDefault();
-
-      this.paletteOpen.update(v => !v);
-
-    }
-
-  }
 }
