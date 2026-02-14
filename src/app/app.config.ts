@@ -3,9 +3,23 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 
+
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
+import Material from '@primeuix/themes/material';
+import { provideHttpClient } from '@angular/common/http';
+
+
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    provideHttpClient(),
+     providePrimeNG({
+            theme: {
+                preset: Aura
+            }
+        })
   ]
 };

@@ -1,0 +1,77 @@
+<p-card styleClass="
+    flex flex-col
+    h-[500px]
+    w-full max-w-md
+    mx-auto
+
+    bg-white dark:bg-zinc-900
+
+    border border-zinc-200 dark:border-zinc-800
+    rounded-xl
+    shadow-sm
+  ">
+
+    <!-- mensagens -->
+    <p-scrollPanel styleClass="flex-1 p-4">
+
+        <div class="space-y-3">
+
+            <div *ngFor="let msg of messages()" class="flex" [ngClass]="{
+          'justify-end': !msg.isBot,
+          'justify-start': msg.isBot
+        }">
+
+                <div class="
+            px-4 py-2
+            rounded-2xl
+            max-w-[80%]
+            text-sm
+
+            transition-colors
+
+            bg-zinc-100 text-zinc-900
+            dark:bg-zinc-800 dark:text-zinc-100
+          " [ngClass]="{
+            '!bg-primary !text-primary-contrast': !msg.isBot
+          }">
+
+                    {{ msg.text }}
+
+                </div>
+
+            </div>
+
+
+            <!-- loading -->
+            <div *ngIf="loading()" class="flex items-center gap-2 text-sm text-zinc-500">
+
+                <i class="pi pi-spin pi-spinner"></i>
+
+                Digitando...
+
+            </div>
+
+        </div>
+
+    </p-scrollPanel>
+
+
+    <!-- input -->
+    <ng-template pTemplate="footer">
+
+        <div class="
+      flex gap-2
+      pt-2
+      border-t border-zinc-200 dark:border-zinc-800
+    ">
+
+            <input pInputText [ngModel]="input()" (ngModelChange)="input.set($event)" (keyup.enter)="send()"
+                placeholder="Digite sua mensagem..." class="flex-1" />
+
+            <button pButton icon="pi pi-send" (click)="send()" [loading]="loading()" severity="primary"></button>
+
+        </div>
+
+    </ng-template>
+
+</p-card>
