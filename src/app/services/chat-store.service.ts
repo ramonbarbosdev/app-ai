@@ -241,10 +241,8 @@ export class ChatStoreService {
     .subscribe({
 
       next: (response: any) => {
-
         const aiText =
-          response?.output?.text ??
-          response?.result?.output?.text ??
+          response?.content ??
           'Sem resposta';
 
         this.addAIMessage(aiText);
