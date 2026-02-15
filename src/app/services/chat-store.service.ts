@@ -106,7 +106,7 @@ export class ChatStoreService {
 
   createLocalConversation() {
 
-    const id = crypto.randomUUID();
+    const id = this.generateUUID();
 
     const newConv: Conversation = {
 
@@ -130,7 +130,7 @@ export class ChatStoreService {
 
   createConversation() {
 
-    const id = crypto.randomUUID();
+    const id = this.generateUUID();
 
     const newConv: Conversation = {
 
@@ -346,5 +346,20 @@ export class ChatStoreService {
     this.paletteOpen.update(v => !v);
 
   }
+
+  generateUUID(): string {
+
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+
+  }
+
 
 }
