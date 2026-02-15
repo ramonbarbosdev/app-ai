@@ -9,6 +9,7 @@ import Aura from '@primeuix/themes/aura';
 import Material from '@primeuix/themes/material';
 import { provideHttpClient } from '@angular/common/http';
 
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 export const appConfig: ApplicationConfig = {
@@ -16,10 +17,18 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
+    provideAnimationsAsync(),
      providePrimeNG({
-            theme: {
-                preset: Aura
-            }
-        })
+         ripple: true,
+      theme: {
+        preset: Aura,
+        options: {
+          prefix: 'p',
+          // darkModeSelector: '.app-dark',
+          cssLayer: false
+        }
+      }
+    }),
+
   ]
 };

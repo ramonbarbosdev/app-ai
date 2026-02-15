@@ -40,9 +40,6 @@ export class ChatStoreService {
 
   paletteOpen = signal(false);
 
-  // ----------------------
-  // DERIVED STATE
-  // ----------------------
 
   activeConversation = computed(() =>
 
@@ -51,10 +48,6 @@ export class ChatStoreService {
     )
 
   );
-
-  // ----------------------
-  // INITIAL LOAD
-  // ----------------------
 
   loadConversations() {
 
@@ -100,10 +93,6 @@ export class ChatStoreService {
 
   }
 
-  // ----------------------
-  // LOCAL CONVERSATION (SEM BACKEND)
-  // ----------------------
-
   createLocalConversation() {
 
     const id = this.generateUUID();
@@ -123,10 +112,6 @@ export class ChatStoreService {
     this.activeConversationId.set(id);
 
   }
-
-  // ----------------------
-  // CREATE NEW CONVERSATION
-  // ----------------------
 
   createConversation() {
 
@@ -148,9 +133,6 @@ export class ChatStoreService {
 
   }
 
-  // ----------------------
-  // SELECT CONVERSATION
-  // ----------------------
 
   setActiveConversation(id: string) {
 
@@ -159,10 +141,6 @@ export class ChatStoreService {
     this.loadHistory(id);
 
   }
-
-  // ----------------------
-  // LOAD HISTORY FROM BACKEND
-  // ----------------------
 
   loadHistory(conversationId: string) {
 
@@ -199,10 +177,6 @@ export class ChatStoreService {
       });
 
   }
-
-  // ----------------------
-  // SEND MESSAGE
-  // ----------------------
 
   sendMessage(content: string) {
 
@@ -263,10 +237,6 @@ export class ChatStoreService {
 
   }
 
-  // ----------------------
-  // ADD AI MESSAGE
-  // ----------------------
-
   addAIMessage(content: string) {
 
     const id = this.activeConversationId();
@@ -292,15 +262,10 @@ export class ChatStoreService {
 
   }
 
-  // ----------------------
-  // RENAME CONVERSATION
-  // ----------------------
-
   renameConversation(id: string, title: string) {
 
     if (!title.trim()) return;
 
-    // update local
     this.conversations.update(list =>
       list.map(conv =>
         conv.id === id
@@ -309,12 +274,54 @@ export class ChatStoreService {
       )
     );
 
-    // update backend (opcional)
     this.api.renameConversation({
       conversationId: id,
       title
     }).subscribe({
       error: () => { }
+    });
+
+  }
+
+  deleteConversation(id: string) {
+
+    if (!id) return;
+
+    this.api.removeConversation(id).subscribe({
+      next: (response: any) => {
+
+        const updated = this.conversations()
+          .filter(conv => conv.id !== id);
+
+        this.conversations.set(updated);
+
+        if (updated.length > 0) {
+
+          this.setActiveConversation(updated[0].id);
+
+        }
+        else {
+          this.createLocalConversation();
+        }
+
+      },
+      error: (err) => {
+
+        // console.error('Erro ao deletar conversa', err);
+        const updated = this.conversations()
+          .filter(conv => conv.id !== id);
+
+        this.conversations.set(updated);
+
+        if (updated.length > 0) {
+
+          this.setActiveConversation(updated[0].id);
+
+        }
+        else {
+          this.createLocalConversation();
+        }
+      }
     });
 
   }

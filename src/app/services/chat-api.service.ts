@@ -75,5 +75,11 @@ export class ChatApiService {
 
   }
 
+  removeConversation(id: string){
+       return this.http.delete(
+        `${this.baseUrl}/${id}`,
+    );
+  }
+
 
 }

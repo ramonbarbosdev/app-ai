@@ -5,7 +5,8 @@
 
     <button (click)="onCreate()"
       class="flex items-center justify-center w-12 h-12 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all duration-200 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.35)]">
-      <span class="text-lg font-semibold">+</span>
+      <i class="pi pi-plus text-lg font-semibold" ></i>
+
     </button>
 
     <button *ngFor="let conversation of conversations" (click)="onSelect(conversation.id)"
