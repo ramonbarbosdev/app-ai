@@ -23,7 +23,6 @@ export interface Conversation {
 })
 export class ChatStoreService {
 
-  // STATE
 
   conversations = signal<Conversation[]>([
     {
@@ -48,8 +47,6 @@ export class ChatStoreService {
 
   paletteOpen = signal(false);
 
-  // DERIVED STATE
-
   activeConversation = computed(() =>
 
     this.conversations().find(
@@ -58,7 +55,6 @@ export class ChatStoreService {
 
   );
 
-  // ACTIONS
 
   setActiveConversation(id: string) {
 
@@ -117,7 +113,6 @@ export class ChatStoreService {
       })
     );
 
-    // simulate AI response
     setTimeout(() => {
 
       this.addAIMessage("Resposta simulada da IA.");
