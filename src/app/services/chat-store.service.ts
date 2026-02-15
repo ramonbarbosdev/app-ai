@@ -247,11 +247,13 @@ export class ChatStoreService {
 
         },
 
-        error: () => {
+        error: (error) => {
 
-          this.addAIMessage(
-            'Erro ao obter resposta do servidor.'
-          );
+          const message =
+            error?.error?.message ??
+            'Erro ao obter resposta do servidor.';
+
+          this.addAIMessage(message);
 
           this.isTyping.set(false);
 

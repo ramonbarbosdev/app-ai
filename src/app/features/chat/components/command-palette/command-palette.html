@@ -1,4 +1,3 @@
-<!-- BACKDROP -->
 <div
 
   *ngIf="isOpen"
@@ -9,7 +8,6 @@
 
 >
 
-  <!-- MODAL -->
   <div
 
     (click)="$event.stopPropagation()"
@@ -18,7 +16,6 @@
 
   >
 
-    <!-- INPUT -->
     <div class="border-b border-white/10 px-4 py-3">
 
       <input
@@ -36,7 +33,6 @@
 
     </div>
 
-    <!-- RESULTS -->
     <div class="max-h-80 overflow-y-auto">
 
       <button
@@ -53,7 +49,6 @@
 
       </button>
 
-      <!-- Empty -->
       <div
 
         *ngIf="filtered().length === 0"
