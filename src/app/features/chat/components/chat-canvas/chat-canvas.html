@@ -1,12 +1,13 @@
 <div
   #scrollContainer
-  class="flex-1 min-h-0 overflow-y-auto px-6 py-8 flex justify-center"
+  class="flex-1 min-h-0 overflow-y-auto px-6 py-8 flex justify-center "
 >
 
-  <div class="w-full max-w-3xl">
+  <div class="w-full max-w-3xl space-y-6  ">
 
+    <!-- EMPTY STATE -->
     <div
-      *ngIf="!conversation?.messages || conversation.messages.length === 0"
+      *ngIf="(!conversation?.messages || conversation.messages.length === 0) && !isTyping"
       class="flex flex-col items-center justify-center text-center mt-24 select-none"
     >
 
@@ -22,45 +23,62 @@
 
       <p class="text-white/50 text-sm max-w-md">
         Faça uma pergunta, peça ajuda com código ou explore ideias.
-        Sua conversa começará aqui.
       </p>
 
     </div>
 
-    <div
-      *ngIf="conversation?.messages && conversation.messages.length > 0"
-      class="space-y-6"
-    >
+    <!-- MESSAGES -->
+    <ng-container *ngFor="let message of conversation?.messages">
 
-      <ng-container *ngFor="let message of conversation.messages">
 
-        <div *ngIf="message.role === 'user'" class="flex justify-end">
+      <!-- USER -->
+      <div *ngIf="message.role === 'user'" class="flex justify-end ">
 
-          <div
-            class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm text-white"
-          >
-            {{ message.content }}
-          </div>
+        <div class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm text-white">
+          {{ message.content }}
+        </div>
+
+      </div>
+
+      <!-- AI -->
+      <div *ngIf="message.role === 'assistant'" class="flex gap-3">
+
+        <div
+          class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0"
+        >
+          ✦
+        </div>
+
+        <div
+          class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm text-white/90"
+        >
+          {{ message.content }}
+        </div>
+
+      </div>
+
+    </ng-container>
+
+    <!-- TYPING INDICATOR (FORA DO LOOP) -->
+    <div *ngIf="isTyping" class="flex gap-3">
+
+      <div
+        class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"
+      >
+        ✦
+      </div>
+
+      <div class="bg-white/5 border border-white/10 rounded-xl px-5 py-4">
+
+        <div class="flex gap-1">
+
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:.15s]"></div>
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:.3s]"></div>
 
         </div>
 
-        <div *ngIf="message.role === 'assistant'" class="flex gap-3">
-
-          <div
-            class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0"
-          >
-            ✦
-          </div>
-
-          <div
-            class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm text-white/90"
-          >
-            {{ message.content }}
-          </div>
-
-        </div>
-
-      </ng-container>
+      </div>
 
     </div>
 

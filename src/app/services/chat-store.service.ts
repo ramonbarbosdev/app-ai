@@ -215,15 +215,15 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-              ...conv,
-              messages: [
-                ...conv.messages,
-                {
-                  role: 'user',
-                  content
-                }
-              ]
-            }
+            ...conv,
+            messages: [
+              ...conv.messages,
+              {
+                role: 'user',
+                content
+              }
+            ]
+          }
           : conv
       )
     );
@@ -238,30 +238,26 @@ export class ChatStoreService {
       message: content
 
     })
-    .subscribe({
+      .subscribe({
 
-      next: (response: any) => {
-        const aiText =
-          response?.content ??
-          'Sem resposta';
+        next: (response: any) => {
+          this.loadHistory(id);
 
-        this.addAIMessage(aiText);
+          this.isTyping.set(false);
 
-        this.isTyping.set(false);
+        },
 
-      },
+        error: () => {
 
-      error: () => {
+          this.addAIMessage(
+            'Erro ao obter resposta do servidor.'
+          );
 
-        this.addAIMessage(
-          'Erro ao obter resposta do servidor.'
-        );
+          this.isTyping.set(false);
 
-        this.isTyping.set(false);
+        }
 
-      }
-
-    });
+      });
 
   }
 
@@ -279,15 +275,15 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-              ...conv,
-              messages: [
-                ...conv.messages,
-                {
-                  role: 'assistant',
-                  content
-                }
-              ]
-            }
+            ...conv,
+            messages: [
+              ...conv.messages,
+              {
+                role: 'assistant',
+                content
+              }
+            ]
+          }
           : conv
       )
     );
@@ -316,7 +312,7 @@ export class ChatStoreService {
       conversationId: id,
       title
     }).subscribe({
-      error: () => {}
+      error: () => { }
     });
 
   }
