@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ConversationDTO {
 
@@ -30,7 +31,9 @@ export class ChatApiService {
 
   private http = inject(HttpClient);
 
-  private baseUrl = 'http://localhost:8080/api/chat';
+   private readonly apiUrl = `${environment.apiUrl}`;
+
+  private baseUrl = `${this.apiUrl}/chat`;
 
   // GET conversations
   getConversations(): Observable<ConversationDTO[]> {
