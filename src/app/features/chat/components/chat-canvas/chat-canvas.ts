@@ -6,6 +6,9 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
   imports: [CommonModule],
   templateUrl: './chat-canvas.html',
   styleUrl: './chat-canvas.scss',
+   host: {
+    class: 'flex-1 min-h-0 flex flex-col'
+  }
 })
 export class ChatCanvas {
 

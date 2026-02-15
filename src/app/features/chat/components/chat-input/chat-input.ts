@@ -5,6 +5,9 @@ import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
   imports: [],
   templateUrl: './chat-input.html',
   styleUrl: './chat-input.scss',
+    host: {
+    class: 'shrink-0'
+  }
 })
 export class ChatInput {
 

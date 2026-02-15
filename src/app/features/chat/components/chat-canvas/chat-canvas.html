@@ -1,6 +1,6 @@
 <div
   #scrollContainer
-  class="flex-1 overflow-y-auto px-6 py-8 flex justify-center"
+  class="flex-1 min-h-0 overflow-y-auto px-6 py-8 flex justify-center"
 >
 
   <div class="w-full max-w-3xl space-y-6">
@@ -8,76 +8,29 @@
     <!-- Messages -->
     <ng-container *ngFor="let message of conversation?.messages">
 
-      <!-- USER MESSAGE -->
-      <div
-        *ngIf="message.role === 'user'"
-        class="flex justify-end animate-[fadeIn_.2s_ease]"
-      >
+      <!-- USER -->
+      <div *ngIf="message.role === 'user'" class="flex justify-end">
 
-        <div
-          class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm text-white backdrop-blur"
-        >
+        <div class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm">
           {{ message.content }}
         </div>
 
       </div>
 
-      <!-- AI MESSAGE -->
-      <div
-        *ngIf="message.role === 'assistant'"
-        class="flex gap-3 animate-[fadeIn_.2s_ease]"
-      >
+      <!-- AI -->
+      <div *ngIf="message.role === 'assistant'" class="flex gap-3">
 
-        <!-- Avatar -->
-        <div
-          class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0"
-        >
-          <svg
-            class="w-4 h-4 text-emerald-400"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/>
-          </svg>
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+          ✦
         </div>
 
-        <!-- Message Card -->
-        <div
-          class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm text-white/90 backdrop-blur leading-relaxed"
-        >
+        <div class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm">
           {{ message.content }}
         </div>
 
       </div>
 
     </ng-container>
-
-    <!-- Typing indicator -->
-    <div *ngIf="isTyping" class="flex gap-3">
-
-      <div
-        class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"
-      >
-        <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/>
-        </svg>
-      </div>
-
-      <div
-        class="bg-white/5 border border-white/10 rounded-xl px-5 py-4"
-      >
-
-        <div class="flex gap-1">
-
-          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"></div>
-          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce delay-150"></div>
-          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-bounce delay-300"></div>
-
-        </div>
-
-      </div>
-
-    </div>
 
   </div>
 
