@@ -1,0 +1,63 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface ConversationDTO {
+
+  id: string;
+  title: string;
+
+}
+
+export interface ChatMessageRequest {
+
+  conversationId: string;
+  message: string;
+
+}
+
+export interface ChatHistoryMessage {
+
+  role: string;
+  content: string;
+
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChatApiService {
+
+  private http = inject(HttpClient);
+
+  private baseUrl = 'http://localhost:8080/api/chat';
+
+  // GET conversations
+  getConversations(): Observable<ConversationDTO[]> {
+
+    return this.http.get<ConversationDTO[]>(
+      `${this.baseUrl}/conversations`
+    );
+
+  }
+
+  // GET history
+  getHistory(conversationId: string): Observable<ChatHistoryMessage[]> {
+
+    return this.http.get<ChatHistoryMessage[]>(
+      `${this.baseUrl}/history/${conversationId}`
+    );
+
+  }
+
+  // POST send message
+  sendMessage(data: ChatMessageRequest): Observable<any> {
+
+    return this.http.post(
+      `${this.baseUrl}/send`,
+      data
+    );
+
+  }
+
+}

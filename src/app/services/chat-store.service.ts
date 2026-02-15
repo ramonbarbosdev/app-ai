@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { ChatApiService } from './chat-api.service';
 
 export interface Message {
 
@@ -23,29 +24,21 @@ export interface Conversation {
 })
 export class ChatStoreService {
 
+  private api = inject(ChatApiService);
 
-  conversations = signal<Conversation[]>([
-    {
-      id: crypto.randomUUID(),
-      title: 'Nova conversa',
-      messages: [
-        {
-          role: 'assistant',
-          content: 'Olá. Como posso ajudar você hoje?'
-        }
-      ]
-    }
-  ]);
+  // STATE
 
-  activeConversationId = signal<string>(
-    this.conversations()[0].id
-  );
+  conversations = signal<Conversation[]>([]);
+
+  activeConversationId = signal<string | null>(null);
 
   isTyping = signal(false);
 
   contextOpen = signal(true);
 
   paletteOpen = signal(false);
+
+  // DERIVED STATE
 
   activeConversation = computed(() =>
 
@@ -55,101 +48,171 @@ export class ChatStoreService {
 
   );
 
+  // LOAD ALL CONVERSATIONS FROM BACKEND
+
+  loadConversations() {
+
+    this.api.getConversations()
+      .subscribe(conversations => {
+
+        const mapped: Conversation[] = conversations.map(c => ({
+          id: c.id,
+          title: c.title,
+          messages: []
+        }));
+
+        this.conversations.set(mapped);
+
+        if (mapped.length > 0) {
+
+          this.setActiveConversation(mapped[0].id);
+
+        }
+
+      });
+
+  }
+
+  // LOAD HISTORY
+
+  loadHistory(conversationId: string) {
+
+    this.api.getHistory(conversationId)
+      .subscribe(history => {
+
+        this.conversations.update(list =>
+          list.map(conv => {
+
+            if (conv.id !== conversationId) return conv;
+
+            return {
+
+              ...conv,
+
+              messages: history.map(m => ({
+                role: m.role as 'user' | 'assistant',
+                content: m.content
+              }))
+
+            };
+
+          })
+        );
+
+      });
+
+  }
+
+  // SELECT CONVERSATION
 
   setActiveConversation(id: string) {
 
     this.activeConversationId.set(id);
 
+    this.loadHistory(id);
+
   }
+
+  // CREATE NEW CONVERSATION (frontend only, backend will persist on first message)
 
   createConversation() {
 
+    const id = crypto.randomUUID();
+
     const newConv: Conversation = {
 
-      id: crypto.randomUUID(),
+      id,
 
       title: 'Nova conversa',
 
-      messages: [
-        {
-          role: 'assistant',
-          content: 'Nova conversa criada.'
-        }
-      ]
+      messages: []
 
     };
 
     this.conversations.update(list => [...list, newConv]);
 
-    this.activeConversationId.set(newConv.id);
+    this.activeConversationId.set(id);
 
   }
+
+  // SEND MESSAGE TO BACKEND
 
   sendMessage(content: string) {
 
     const id = this.activeConversationId();
 
-    this.isTyping.set(true);
+    if (!id) return;
+
+    // add user message instantly (optimistic UI)
 
     this.conversations.update(list =>
-      list.map(conv => {
-
-        if (conv.id !== id) return conv;
-
-        return {
-
-          ...conv,
-
-          messages: [
-            ...conv.messages,
-            {
-              role: 'user',
-              content
+      list.map(conv =>
+        conv.id === id
+          ? {
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'user',
+                  content
+                }
+              ]
             }
-          ]
-
-        };
-
-      })
+          : conv
+      )
     );
 
-    setTimeout(() => {
+    this.isTyping.set(true);
 
-      this.addAIMessage("Resposta simulada da IA.");
+    // send to backend
+
+    this.api.sendMessage({
+      conversationId: id,
+      message: content
+    })
+    .subscribe((response: any) => {
+
+      const aiText =
+        response?.output?.text ??
+        response?.result?.output?.text ??
+        'Sem resposta';
+
+      this.addAIMessage(aiText);
 
       this.isTyping.set(false);
 
-    }, 1400);
+    });
 
   }
+
+  // ADD AI MESSAGE
 
   addAIMessage(content: string) {
 
     const id = this.activeConversationId();
 
+    if (!id) return;
+
     this.conversations.update(list =>
-      list.map(conv => {
-
-        if (conv.id !== id) return conv;
-
-        return {
-
-          ...conv,
-
-          messages: [
-            ...conv.messages,
-            {
-              role: 'assistant',
-              content
+      list.map(conv =>
+        conv.id === id
+          ? {
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'assistant',
+                  content
+                }
+              ]
             }
-          ]
-
-        };
-
-      })
+          : conv
+      )
     );
 
   }
+
+  // RENAME CONVERSATION
 
   renameConversation(id: string, title: string) {
 
@@ -163,6 +226,7 @@ export class ChatStoreService {
 
   }
 
+  // UI STATE
 
   toggleContext() {
 
@@ -184,8 +248,8 @@ export class ChatStoreService {
 
   togglePalette() {
 
-  this.paletteOpen.update(v => !v);
+    this.paletteOpen.update(v => !v);
 
-}
+  }
 
 }

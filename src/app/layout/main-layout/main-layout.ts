@@ -21,6 +21,13 @@ export class MainLayout {
 
   }
 
+
+  ngOnInit() {
+
+    this.chat.loadConversations();
+
+  }
+
   @HostListener('document:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
 

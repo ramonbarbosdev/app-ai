@@ -23,7 +23,7 @@
 
   </div>
 
-  <app-conversation-dock [conversations]="chat.conversations()" [activeId]="chat.activeConversationId()"
+  <app-conversation-dock [conversations]="chat.conversations()" [activeId]="chat.activeConversationId() ?? ''"
     (select)="chat.setActiveConversation($event)" (create)="chat.createConversation()"></app-conversation-dock>
 
   <app-command-palette [isOpen]="chat.paletteOpen()" [conversations]="chat.conversations()"
