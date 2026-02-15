@@ -1,59 +1,133 @@
-# AppAi
+# MemorixAI Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Frontend do **MemorixAI**, um assistente de inteligência artificial com memória persistente, desenvolvido com Angular e TailwindCSS.
 
-## Development server
+Esta aplicação fornece uma interface moderna e interativa para comunicação com a API, permitindo conversas contínuas com persistência de contexto.
 
-To start a local development server, run:
+---
 
-```bash
+## Tecnologias utilizadas
+
+* Angular 17+
+* TypeScript
+* TailwindCSS
+* Angular Signals
+* Standalone Components
+* REST API integration
+
+---
+
+## Funcionalidades
+
+* Interface de chat moderna e responsiva
+* Envio e recebimento de mensagens em tempo real
+* Indicador de digitação
+* Persistência de conversas
+* Gerenciamento de estado com Signals
+* Arquitetura baseada em componentes standalone
+
+---
+
+## Estrutura do projeto
+
+```
+src/app/
+ ├── core/              # Serviços e lógica principal
+ ├── features/chat/components     # Componentes do chat
+ │    ├── chat-header
+ │    ├── chat-canvas
+ │    ├── chat-input
+ │    └── chat-message
+ ├── shared/            # Componentes reutilizáveis
+ └── app.ts
+```
+
+---
+
+## Configuração
+
+Configure a URL da API no environment:
+
+```
+src/environments/environment.ts
+```
+
+Exemplo:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api'
+};
+```
+
+---
+
+## Executando o projeto
+
+Clone o repositório:
+
+```
+git clone https://github.com/ramonbarbosdev/app-ai.git
+```
+
+Entre na pasta:
+
+```
+cd app-ai
+```
+
+Instale as dependências:
+
+```
+npm install
+```
+
+Execute o projeto:
+
+```
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Acesse no navegador:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## Integração com API
+
+Endpoint utilizado:
+
+```
+POST /api/chat
 ```
 
-## Building
+Exemplo de requisição:
 
-To build the project run:
-
-```bash
-ng build
+```json
+{
+  "message": "Olá"
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Objetivo
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Este projeto faz parte do portfólio com foco em:
 
-```bash
-ng test
-```
+* Interfaces modernas para assistentes de IA
+* Arquitetura frontend escalável com Angular
+* Integração com backend Spring Boot e Spring AI
+* Experiência de usuário fluida e responsiva
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## Autor
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Ramon Barbosa
+Desenvolvedor Full Stack
+Angular | Spring Boot | AI
