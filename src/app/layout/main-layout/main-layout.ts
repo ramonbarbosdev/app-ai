@@ -17,6 +17,7 @@ import { ChatStoreService } from '../../services/chat-store.service';
 })
 export class MainLayout {
 
-    constructor(public chat: ChatStoreService) {}
+  constructor(public chat: ChatStoreService) {
 
+  }
 }

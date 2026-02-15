@@ -1,7 +1,9 @@
 <div class="h-screen w-screen flex flex-col bg-[#020617] overflow-hidden">
 
-  <app-chat-header [conversationTitle]="chat.activeConversation()?.title ?? ''"
-    (commandPalette)="chat.openPalette()"></app-chat-header>
+  <app-chat-header 
+  [title]="chat.activeConversation()?.title ?? ''"
+
+  (commandPalette)="chat.openPalette()"></app-chat-header>
 
   <div class="flex-1 flex overflow-hidden relative">
 

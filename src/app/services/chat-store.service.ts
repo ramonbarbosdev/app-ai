@@ -156,6 +156,19 @@ export class ChatStoreService {
 
   }
 
+  renameConversation(id: string, title: string) {
+
+    this.conversations.update(list =>
+      list.map(conv =>
+        conv.id === id
+          ? { ...conv, title }
+          : conv
+      )
+    );
+
+  }
+
+
   toggleContext() {
 
     this.contextOpen.update(v => !v);
