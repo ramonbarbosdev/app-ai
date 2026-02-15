@@ -18,7 +18,6 @@ export class ChatHeader {
 
   editText = signal('');
 
-  // PEGAR DIRETO DO STORE
   conversation = computed(() => this.chat.activeConversation());
 
   constructor(public chat: ChatStoreService) {}

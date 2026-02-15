@@ -187,4 +187,10 @@ export class ChatStoreService {
 
   }
 
+  togglePalette() {
+
+  this.paletteOpen.update(v => !v);
+
+}
+
 }

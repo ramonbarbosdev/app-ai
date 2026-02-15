@@ -20,4 +20,16 @@ export class MainLayout {
   constructor(public chat: ChatStoreService) {
 
   }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+
+    if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+
+      event.preventDefault();
+
+      this.chat.togglePalette();
+
+    }
+  }
 }
