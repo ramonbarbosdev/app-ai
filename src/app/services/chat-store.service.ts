@@ -26,7 +26,9 @@ export class ChatStoreService {
 
   private api = inject(ChatApiService);
 
+  // ----------------------
   // STATE
+  // ----------------------
 
   conversations = signal<Conversation[]>([]);
 
@@ -38,7 +40,9 @@ export class ChatStoreService {
 
   paletteOpen = signal(false);
 
+  // ----------------------
   // DERIVED STATE
+  // ----------------------
 
   activeConversation = computed(() =>
 
@@ -48,24 +52,47 @@ export class ChatStoreService {
 
   );
 
-  // LOAD ALL CONVERSATIONS FROM BACKEND
+  // ----------------------
+  // INITIAL LOAD
+  // ----------------------
 
   loadConversations() {
 
     this.api.getConversations()
-      .subscribe(conversations => {
+      .subscribe({
 
-        const mapped: Conversation[] = conversations.map(c => ({
-          id: c.id,
-          title: c.title,
-          messages: []
-        }));
+        next: (conversations) => {
 
-        this.conversations.set(mapped);
+          // se banco vazio, cria conversa local
+          if (!conversations || conversations.length === 0) {
 
-        if (mapped.length > 0) {
+            this.createLocalConversation();
+
+            return;
+
+          }
+
+          const mapped: Conversation[] =
+            conversations.map(c => ({
+
+              id: c.id,
+
+              title: c.title,
+
+              messages: []
+
+            }));
+
+          this.conversations.set(mapped);
 
           this.setActiveConversation(mapped[0].id);
+
+        },
+
+        error: () => {
+
+          // fallback se backend indisponível
+          this.createLocalConversation();
 
         }
 
@@ -73,47 +100,33 @@ export class ChatStoreService {
 
   }
 
-  // LOAD HISTORY
+  // ----------------------
+  // LOCAL CONVERSATION (SEM BACKEND)
+  // ----------------------
 
-  loadHistory(conversationId: string) {
+  createLocalConversation() {
 
-    this.api.getHistory(conversationId)
-      .subscribe(history => {
+    const id = crypto.randomUUID();
 
-        this.conversations.update(list =>
-          list.map(conv => {
+    const newConv: Conversation = {
 
-            if (conv.id !== conversationId) return conv;
+      id,
 
-            return {
+      title: 'Nova conversa',
 
-              ...conv,
+      messages: []
 
-              messages: history.map(m => ({
-                role: m.role as 'user' | 'assistant',
-                content: m.content
-              }))
+    };
 
-            };
-
-          })
-        );
-
-      });
-
-  }
-
-  // SELECT CONVERSATION
-
-  setActiveConversation(id: string) {
+    this.conversations.set([newConv]);
 
     this.activeConversationId.set(id);
 
-    this.loadHistory(id);
-
   }
 
-  // CREATE NEW CONVERSATION (frontend only, backend will persist on first message)
+  // ----------------------
+  // CREATE NEW CONVERSATION
+  // ----------------------
 
   createConversation() {
 
@@ -135,42 +148,99 @@ export class ChatStoreService {
 
   }
 
-  // SEND MESSAGE TO BACKEND
+  // ----------------------
+  // SELECT CONVERSATION
+  // ----------------------
+
+  setActiveConversation(id: string) {
+
+    this.activeConversationId.set(id);
+
+    this.loadHistory(id);
+
+  }
+
+  // ----------------------
+  // LOAD HISTORY FROM BACKEND
+  // ----------------------
+
+  loadHistory(conversationId: string) {
+
+    this.api.getHistory(conversationId)
+      .subscribe({
+
+        next: (history) => {
+
+          this.conversations.update(list =>
+            list.map(conv => {
+
+              if (conv.id !== conversationId) return conv;
+
+              return {
+
+                ...conv,
+
+                messages: history.map(m => ({
+                  role: m.role as 'user' | 'assistant',
+                  content: m.content
+                }))
+
+              };
+
+            })
+          );
+
+        },
+
+        error: () => {
+          // conversa local ainda não existe no backend
+        }
+
+      });
+
+  }
+
+  // ----------------------
+  // SEND MESSAGE
+  // ----------------------
 
   sendMessage(content: string) {
 
     const id = this.activeConversationId();
 
-    if (!id) return;
+    if (!id || !content.trim()) return;
 
-    // add user message instantly (optimistic UI)
-
+    // adiciona mensagem do usuário localmente
     this.conversations.update(list =>
       list.map(conv =>
         conv.id === id
           ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                role: 'user',
-                content
-              }
-            ]
-          }
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'user',
+                  content
+                }
+              ]
+            }
           : conv
       )
     );
 
     this.isTyping.set(true);
 
-    // send to backend
-
+    // envia para backend
     this.api.sendMessage({
+
       conversationId: id,
+
       message: content
+
     })
-      .subscribe((response: any) => {
+    .subscribe({
+
+      next: (response: any) => {
 
         const aiText =
           response?.output?.text ??
@@ -181,11 +251,25 @@ export class ChatStoreService {
 
         this.isTyping.set(false);
 
-      });
+      },
+
+      error: () => {
+
+        this.addAIMessage(
+          'Erro ao obter resposta do servidor.'
+        );
+
+        this.isTyping.set(false);
+
+      }
+
+    });
 
   }
 
+  // ----------------------
   // ADD AI MESSAGE
+  // ----------------------
 
   addAIMessage(content: string) {
 
@@ -197,31 +281,30 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                role: 'assistant',
-                content
-              }
-            ]
-          }
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'assistant',
+                  content
+                }
+              ]
+            }
           : conv
       )
     );
 
   }
 
+  // ----------------------
   // RENAME CONVERSATION
-
+  // ----------------------
 
   renameConversation(id: string, title: string) {
 
-    this.api.renameConversation({
-      conversationId: id,
-      title
-    }).subscribe();
+    if (!title.trim()) return;
 
+    // update local
     this.conversations.update(list =>
       list.map(conv =>
         conv.id === id
@@ -230,9 +313,19 @@ export class ChatStoreService {
       )
     );
 
+    // update backend (opcional)
+    this.api.renameConversation({
+      conversationId: id,
+      title
+    }).subscribe({
+      error: () => {}
+    });
+
   }
 
+  // ----------------------
   // UI STATE
+  // ----------------------
 
   toggleContext() {
 

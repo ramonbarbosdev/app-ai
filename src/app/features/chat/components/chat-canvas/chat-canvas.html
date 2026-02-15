@@ -3,34 +3,74 @@
   class="flex-1 min-h-0 overflow-y-auto px-6 py-8 flex justify-center"
 >
 
-  <div class="w-full max-w-3xl space-y-6">
+  <div class="w-full max-w-3xl">
 
-    <!-- Messages -->
-    <ng-container *ngFor="let message of conversation?.messages">
+    <!-- EMPTY STATE -->
+    <div
+      *ngIf="!conversation?.messages || conversation.messages.length === 0"
+      class="flex flex-col items-center justify-center text-center mt-24 select-none"
+    >
 
-      <!-- USER -->
-      <div *ngIf="message.role === 'user'" class="flex justify-end">
-
-        <div class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm">
-          {{ message.content }}
-        </div>
-
+      <!-- Logo -->
+      <div
+        class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
+      >
+        <span class="text-2xl text-emerald-400">✦</span>
       </div>
 
-      <!-- AI -->
-      <div *ngIf="message.role === 'assistant'" class="flex gap-3">
+      <!-- Title -->
+      <h2 class="text-xl font-semibold text-white mb-2">
+        Bem-vindo ao Nexus AI
+      </h2>
 
-        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          ✦
+      <!-- Subtitle -->
+      <p class="text-white/50 text-sm max-w-md">
+        Faça uma pergunta, peça ajuda com código ou explore ideias.
+        Sua conversa começará aqui.
+      </p>
+
+    </div>
+
+
+    <!-- MESSAGE LIST -->
+    <div
+      *ngIf="conversation?.messages && conversation.messages.length > 0"
+      class="space-y-6"
+    >
+
+      <ng-container *ngFor="let message of conversation.messages">
+
+        <!-- USER -->
+        <div *ngIf="message.role === 'user'" class="flex justify-end">
+
+          <div
+            class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md text-sm text-white"
+          >
+            {{ message.content }}
+          </div>
+
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm">
-          {{ message.content }}
+        <!-- AI -->
+        <div *ngIf="message.role === 'assistant'" class="flex gap-3">
+
+          <div
+            class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0"
+          >
+            ✦
+          </div>
+
+          <div
+            class="bg-white/5 border border-white/10 rounded-xl px-5 py-4 max-w-xl text-sm text-white/90"
+          >
+            {{ message.content }}
+          </div>
+
         </div>
 
-      </div>
+      </ng-container>
 
-    </ng-container>
+    </div>
 
   </div>
 
