@@ -14,3 +14,4 @@ RUN npm install -g serve
 EXPOSE 4200
 
 CMD ["serve", "-s", "dist/app-ai/browser", "-l", "4200"]
+
