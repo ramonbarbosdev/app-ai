@@ -60,4 +60,17 @@ export class ChatApiService {
 
   }
 
+  renameConversation(data: {
+    conversationId: string;
+    title: string;
+  }) {
+
+    return this.http.post(
+        `${this.baseUrl}/rename`,
+      data
+    );
+
+  }
+
+
 }

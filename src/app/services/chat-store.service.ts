@@ -149,15 +149,15 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-              ...conv,
-              messages: [
-                ...conv.messages,
-                {
-                  role: 'user',
-                  content
-                }
-              ]
-            }
+            ...conv,
+            messages: [
+              ...conv.messages,
+              {
+                role: 'user',
+                content
+              }
+            ]
+          }
           : conv
       )
     );
@@ -170,18 +170,18 @@ export class ChatStoreService {
       conversationId: id,
       message: content
     })
-    .subscribe((response: any) => {
+      .subscribe((response: any) => {
 
-      const aiText =
-        response?.output?.text ??
-        response?.result?.output?.text ??
-        'Sem resposta';
+        const aiText =
+          response?.output?.text ??
+          response?.result?.output?.text ??
+          'Sem resposta';
 
-      this.addAIMessage(aiText);
+        this.addAIMessage(aiText);
 
-      this.isTyping.set(false);
+        this.isTyping.set(false);
 
-    });
+      });
 
   }
 
@@ -197,15 +197,15 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-              ...conv,
-              messages: [
-                ...conv.messages,
-                {
-                  role: 'assistant',
-                  content
-                }
-              ]
-            }
+            ...conv,
+            messages: [
+              ...conv.messages,
+              {
+                role: 'assistant',
+                content
+              }
+            ]
+          }
           : conv
       )
     );
@@ -214,7 +214,13 @@ export class ChatStoreService {
 
   // RENAME CONVERSATION
 
+
   renameConversation(id: string, title: string) {
+
+    this.api.renameConversation({
+      conversationId: id,
+      title
+    }).subscribe();
 
     this.conversations.update(list =>
       list.map(conv =>
