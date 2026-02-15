@@ -17,6 +17,8 @@ export interface Conversation {
 
   messages: Message[];
 
+  temporary?: boolean;
+
 }
 
 @Injectable({
@@ -40,14 +42,15 @@ export class ChatStoreService {
 
   paletteOpen = signal(false);
 
-
   activeConversation = computed(() =>
-
     this.conversations().find(
       c => c.id === this.activeConversationId()
-    )
-
+    ) ?? null
   );
+
+  // ----------------------
+  // INIT
+  // ----------------------
 
   loadConversations() {
 
@@ -56,15 +59,6 @@ export class ChatStoreService {
 
         next: (conversations) => {
 
-          // se banco vazio, cria conversa local
-          if (!conversations || conversations.length === 0) {
-
-            this.createLocalConversation();
-
-            return;
-
-          }
-
           const mapped: Conversation[] =
             conversations.map(c => ({
 
@@ -72,19 +66,20 @@ export class ChatStoreService {
 
               title: c.title,
 
-              messages: []
+              messages: [],
+
+              temporary: false
 
             }));
 
           this.conversations.set(mapped);
 
-          this.setActiveConversation(mapped[0].id);
+          this.createLocalConversation();
 
         },
 
         error: () => {
 
-          // fallback se backend indisponível
           this.createLocalConversation();
 
         }
@@ -93,7 +88,22 @@ export class ChatStoreService {
 
   }
 
+  // ----------------------
+  // CREATE TEMPORARY
+  // ----------------------
+
   createLocalConversation() {
+
+    const existing = this.conversations()
+      .find(c => c.temporary);
+
+    if (existing) {
+
+      this.activeConversationId.set(existing.id);
+
+      return;
+
+    }
 
     const id = this.generateUUID();
 
@@ -103,11 +113,15 @@ export class ChatStoreService {
 
       title: 'Nova conversa',
 
-      messages: []
+      messages: [],
+
+      temporary: true
 
     };
 
-    this.conversations.set([newConv]);
+    this.conversations.update(list =>
+      [...list, newConv]
+    );
 
     this.activeConversationId.set(id);
 
@@ -115,32 +129,66 @@ export class ChatStoreService {
 
   createConversation() {
 
-    const id = this.generateUUID();
-
-    const newConv: Conversation = {
-
-      id,
-
-      title: 'Nova conversa',
-
-      messages: []
-
-    };
-
-    this.conversations.update(list => [...list, newConv]);
-
-    this.activeConversationId.set(id);
+    this.createLocalConversation();
 
   }
 
+  // ----------------------
+  // DELETE
+  // ----------------------
+
+  deleteConversation(id: string) {
+
+    this.api.removeConversation(id).subscribe({
+
+      next: () => {
+
+        this.removeConversationLocal(id);
+
+      },
+
+      error: () => {
+
+        this.removeConversationLocal(id);
+
+      }
+
+    });
+
+  }
+
+  private removeConversationLocal(id: string) {
+
+    this.conversations.update(list =>
+      list.filter(conv => conv.id !== id)
+    );
+
+    this.createLocalConversation();
+
+  }
+
+  // ----------------------
+  // ACTIVE
+  // ----------------------
 
   setActiveConversation(id: string) {
 
     this.activeConversationId.set(id);
 
-    this.loadHistory(id);
+    const conv = this.conversations()
+      .find(c => c.id === id);
+
+    if (conv && !conv.temporary) {
+
+      this.loadHistory(id);
+
+    }
 
   }
+
+  // ----------------------
+  // HISTORY
+  // ----------------------
 
   loadHistory(conversationId: string) {
 
@@ -152,7 +200,8 @@ export class ChatStoreService {
           this.conversations.update(list =>
             list.map(conv => {
 
-              if (conv.id !== conversationId) return conv;
+              if (conv.id !== conversationId)
+                return conv;
 
               return {
 
@@ -170,13 +219,15 @@ export class ChatStoreService {
 
         },
 
-        error: () => {
-          // conversa local ainda não existe no backend
-        }
+        error: () => {}
 
       });
 
   }
+
+  // ----------------------
+  // SEND MESSAGE
+  // ----------------------
 
   sendMessage(content: string) {
 
@@ -184,27 +235,26 @@ export class ChatStoreService {
 
     if (!id || !content.trim()) return;
 
-    // adiciona mensagem do usuário localmente
     this.conversations.update(list =>
       list.map(conv =>
         conv.id === id
           ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                role: 'user',
-                content
-              }
-            ]
-          }
+              ...conv,
+              temporary: false, // promove
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'user',
+                  content
+                }
+              ]
+            }
           : conv
       )
     );
 
     this.isTyping.set(true);
 
-    // envia para backend
     this.api.sendMessage({
 
       conversationId: id,
@@ -212,28 +262,27 @@ export class ChatStoreService {
       message: content
 
     })
-      .subscribe({
+    .subscribe({
 
-        next: (response: any) => {
-          this.loadHistory(id);
+      next: () => {
 
-          this.isTyping.set(false);
+        this.loadHistory(id);
 
-        },
+        this.isTyping.set(false);
 
-        error: (error) => {
+      },
 
-          const message =
-            error?.error?.message ??
-            'Erro ao obter resposta do servidor.';
+      error: () => {
 
-          this.addAIMessage(message);
+        this.addAIMessage(
+          'Resposta simulada.'
+        );
 
-          this.isTyping.set(false);
+        this.isTyping.set(false);
 
-        }
+      }
 
-      });
+    });
 
   }
 
@@ -247,20 +296,24 @@ export class ChatStoreService {
       list.map(conv =>
         conv.id === id
           ? {
-            ...conv,
-            messages: [
-              ...conv.messages,
-              {
-                role: 'assistant',
-                content
-              }
-            ]
-          }
+              ...conv,
+              messages: [
+                ...conv.messages,
+                {
+                  role: 'assistant',
+                  content
+                }
+              ]
+            }
           : conv
       )
     );
 
   }
+
+  // ----------------------
+  // RENAME
+  // ----------------------
 
   renameConversation(id: string, title: string) {
 
@@ -269,7 +322,11 @@ export class ChatStoreService {
     this.conversations.update(list =>
       list.map(conv =>
         conv.id === id
-          ? { ...conv, title }
+          ? {
+              ...conv,
+              title,
+              temporary: false
+            }
           : conv
       )
     );
@@ -277,52 +334,7 @@ export class ChatStoreService {
     this.api.renameConversation({
       conversationId: id,
       title
-    }).subscribe({
-      error: () => { }
-    });
-
-  }
-
-  deleteConversation(id: string) {
-
-    if (!id) return;
-
-    this.api.removeConversation(id).subscribe({
-      next: (response: any) => {
-
-        const updated = this.conversations()
-          .filter(conv => conv.id !== id);
-
-        this.conversations.set(updated);
-
-        if (updated.length > 0) {
-
-          this.setActiveConversation(updated[0].id);
-
-        }
-        else {
-          this.createLocalConversation();
-        }
-
-      },
-      error: (err) => {
-
-        // console.error('Erro ao deletar conversa', err);
-        const updated = this.conversations()
-          .filter(conv => conv.id !== id);
-
-        this.conversations.set(updated);
-
-        if (updated.length > 0) {
-
-          this.setActiveConversation(updated[0].id);
-
-        }
-        else {
-          this.createLocalConversation();
-        }
-      }
-    });
+    }).subscribe();
 
   }
 
@@ -354,19 +366,28 @@ export class ChatStoreService {
 
   }
 
+  // ----------------------
+  // UTILS
+  // ----------------------
+
   generateUUID(): string {
 
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    if (crypto?.randomUUID)
       return crypto.randomUUID();
-    }
 
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+      .replace(/[xy]/g, c => {
+
+        const r = Math.random() * 16 | 0;
+
+        const v = c === 'x'
+          ? r
+          : (r & 0x3 | 0x8);
+
+        return v.toString(16);
+
+      });
 
   }
-
 
 }

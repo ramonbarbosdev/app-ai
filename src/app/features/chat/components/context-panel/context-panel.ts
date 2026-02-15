@@ -13,7 +13,7 @@ export class ContextPanel {
 
   private chat = inject(ChatStoreService);
 
-   @Input()
+  @Input()
   conversation: any;
 
   @Input()
@@ -22,13 +22,24 @@ export class ContextPanel {
   @Output()
   close = new EventEmitter<void>();
 
-  onDelete()
-  {
-    if(this.conversation)
-    {
+  ngOnInit() {
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    if (isMobile) {
+      this.isOpen = false;
+    } else {
+      this.isOpen = true;
+    }
+
+  }
+
+
+  onDelete() {
+    if (this.conversation) {
       this.chat.deleteConversation(this.conversation.id);
     }
-    
+
   }
 
 
