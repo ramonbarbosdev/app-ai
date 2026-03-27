@@ -1,4 +1,4 @@
- colocar isso no package.json
+ colocar isso no angular.json
  
  "configurations": {
             "production": {
